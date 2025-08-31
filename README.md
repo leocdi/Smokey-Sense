@@ -35,7 +35,7 @@ This is version **1.0 BETA**, so expect some updates soon. I built everything my
 ## Steam Deck Compatibility
 
 Who says cheats can't be portable? I got this running on my Steam Deck – just build it on Windows, transfer the exe, and run. ESP overlays work, aim assist snaps, and it doesn't overheat the thing. Here's a quick demo video:
-![Steam Deck Video](https://streamable.com/rsp1jz) <!-- Embed or link your video here, e.g., via YouTube or direct file -->
+[![SmokeySense on Steam Deck](https://i.imgur.com/9Gi54j5.png)](https://streamable.com/efdqtv)
 
 ## Installation / Building
 
