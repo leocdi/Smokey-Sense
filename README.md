@@ -4,7 +4,7 @@
 
 This is version **1.0 BETA**, so expect some updates soon. I built everything myself, custom memory reader, entity manager, offset grabber from public A2X sources. No third party libraries, no dependencies, just pure C# .net 4.8 and WinAPI calls. It's lightweight, performant, and even runs on a Steam Deck (more on that below)...
 
-**Disclaimer:** This is for educational purposes only. Cheating in games can get you banned. I don't condone using this in online matches – test it offline or on bots. Always play fair!!
+**Disclaimer:** This is for educational purposes only. Cheating in games can get you banned. I don't condone using this in online matches, test it offline or on bots. Always play fair!!
 
 ## Features
 
