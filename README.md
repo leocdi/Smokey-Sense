@@ -1,6 +1,6 @@
-# SmokeySense - CS2 External Cheat (v1.0 BETA)
+# SmokeySense v1.0 (BETA)
 
-**SmokeySense** is my custom built external cheat for Counter-Strike 2 (CS2). I crafted this from the ground up as a passion project, disguising the entire thing to run as stealthily as possible by using a fake Windows process named `Microsoft.COM.Surogate`. Yeah, you read that right, it blends right into your system like it's part of the OS. No sketchy injections, just clean, read only memory access to keep things safe and undetectable (as much as possible, anyway, use at your own risk!)
+**SmokeySense** is my custom built external cheat for Counter Strike 2 (CS2). I crafted this from the ground up as a passion project, disguising the entire thing to run as stealthily as possible by using a fake Windows process named `Microsoft.COM.Surogate`. Yeah, you read that right, it blends right into your system like it's part of the OS. No sketchy injections, just clean, read only memory access to keep things safe and undetectable (as much as possible, anyway, use at your own risk!)
 
 This is version **1.0 BETA**, so expect some updates soon. I built everything myself, custom memory reader, entity manager, offset grabber from public A2X sources. No third party libraries, no dependencies, just pure C# .net 4.8 and WinAPI calls. It's lightweight, performant, and even runs on a Steam Deck (more on that below)...
 
@@ -8,7 +8,7 @@ This is version **1.0 BETA**, so expect some updates soon. I built everything my
 
 ## Features
 
-- **Stealth:** Runs disguised as `Microsoft.COM.Surogate` – a nod to those old school surrogate processes. It looks legit in Task Manager, helping you fly under the radar.
+- **Stealth:** Runs disguised as `Microsoft.COM.Surogate` a nod to those old school surrogate processes. It looks legit in Task Manager, helping you fly under the radar.
   
 - **Custom Memory Handling:** My own read only memory library (`Memory.cs`) with caching for speed. No writing to the game process, just peeking at what's there. Handles pointers, ints, floats, vectors, and matrices!
 
@@ -16,9 +16,9 @@ This is version **1.0 BETA**, so expect some updates soon. I built everything my
 
 - **Auto Updating Offsets:** Grabs the latest offsets from the public A2X GitHub repo (`OffsetGrabber.cs`) on startup. No manual updates needed, it parses and applies them dynamically.
 
-- **Visual Overlays (ESP):** Box ESP and Bone ESP drawn on a transparent topmost window (`Overlay.cs`). Customizable colors, thickness, and toggles. Yeah, it's a bit FPS-heavy in full matches right now (noted for optimization), but it looks sick for only using GDI..
+- **Visual Overlays (ESP):** Box ESP and Bone ESP drawn on a transparent topmost window (`Overlay.cs`). Customizable colors, thickness, and toggles. Yeah, it's a bit FPS heavy in full matches right now (noted for optimization), but it looks sick for only using GDI..
 
-- **Aim Assist:** Smooth, beyond humanized aim with FOV circle. Locks on heads with a touch of randomness, feels natural, not robotic! (The plan is to bypass the "future AI anti-cheat")
+- **Aim Assist:** Smooth, beyond humanized aim with FOV circle. Locks on heads with a touch of randomness, feels natural, not robotic! (The plan is to bypass the "future AI anti cheat")
 
 - **No Dependencies:** Zero NuGet packages, no external DLLs. Just C# .NET 4.8 Framework and what's in the box. Compile and run, that's it! Only 48KB/s fully compiled as a .exe!!
 
