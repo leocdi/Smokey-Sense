@@ -1,6 +1,6 @@
 # SmokeySense - CS2 External Cheat (v1.0 BETA)
 
-**SmokeySense** is my custom built external cheat for Counter-Strike 2 (CS2). I crafted this from the ground up as a passion project, disguising the entire thing to run as stealthily as possible by using a fake Windows process named `Microsoft.COM.Surogate`. Yeah, you read that right, it blends right into your system like it's part of the OS. No sketchy injections, just clean, read only memory access to keep things safe and undetectable (as much as possible, anyway – use at your own risk!)
+**SmokeySense** is my custom built external cheat for Counter-Strike 2 (CS2). I crafted this from the ground up as a passion project, disguising the entire thing to run as stealthily as possible by using a fake Windows process named `Microsoft.COM.Surogate`. Yeah, you read that right, it blends right into your system like it's part of the OS. No sketchy injections, just clean, read only memory access to keep things safe and undetectable (as much as possible, anyway, use at your own risk!)
 
 This is version **1.0 BETA**, so expect some updates soon. I built everything myself, custom memory reader, entity manager, offset grabber from public A2X sources. No third party libraries, no dependencies, just pure C# .net 4.8 and WinAPI calls. It's lightweight, performant, and even runs on a Steam Deck (more on that below)...
 
