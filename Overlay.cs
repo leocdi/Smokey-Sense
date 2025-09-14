@@ -159,7 +159,7 @@ public class Overlay : Form
     {
         base.OnPaint(e);
         Graphics g = e.Graphics;
-        g.SmoothingMode = SmoothingMode.AntiAlias;
+        g.SmoothingMode = (SmoothingMode)Functions.SmoothingMode;
 
         // Update pen if needed
         if (espPen == null || espPen.Color != Functions.SelectedColor || espPen.Width != Functions.ESPThickness)

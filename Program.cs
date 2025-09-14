@@ -35,6 +35,10 @@ internal static class Program
 
         try
         {
+            Functions.LoadConfig();
+            Functions.StartConfigWatcher();
+
+
             Console.WriteLine("[i]: Initializing memory for CS2...");
             Memory memory = new Memory();
             EntityManager entityManager = new EntityManager(memory);
