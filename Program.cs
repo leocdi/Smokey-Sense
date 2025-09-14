@@ -43,13 +43,16 @@ internal static class Program
             await OffsetGrabber.UpdateOffsets();
 
             Console.WriteLine("[i]: Startup completed!");
-
+            long tickCycle = 0;
+            Stopwatch swCycle = Stopwatch.StartNew();
             // Background thread for entity updates
             Thread updateThread = new Thread(() =>
             {
                 Stopwatch sw = Stopwatch.StartNew();
                 while (true)
                 {
+
+                    tickCycle++;
                     Process proc = memory.GetProcess();
                     bool isForeground = false;
                     IntPtr fgWindow = GetForegroundWindow();
@@ -67,12 +70,18 @@ internal static class Program
                         entityManager.UpdateLocalPlayer(local);
                         entityManager.UpdateEntities(entities);
                         long elapsedMs = (sw.ElapsedTicks / 10000) - startMs;
-                        int targetMs = 16;
+                        int targetMs = 1;
                         if (elapsedMs < targetMs) Thread.Sleep(targetMs - (int)elapsedMs);
                     }
                     else
                     {
                         Thread.Sleep(1000);
+                    }
+                    if (swCycle.ElapsedMilliseconds > 10000)
+                    {
+                        Console.WriteLine($"Avg background thread cycle per sec {tickCycle / 10}");
+                        swCycle.Restart();
+                        tickCycle =0;
                     }
                 }
             });

@@ -11,10 +11,10 @@ public static class Functions
     private static int[] _selectedColorRGBA = new int[4] { 255, 0, 0, 255 };  // RGBA representation
     private static int _espThickness = 1;  // Line thickness for ESP
     private static bool _espEnabled = false;  // Box ESP toggle (disabled by default due to performance.. mabye using GDI was a bad idea after all)
-    private static bool _boneESPEnabled = false;  // Bone ESP toggle
+    private static bool _boneESPEnabled = true;  // Bone ESP toggle
     private static bool _aimAssistEnabled = true;  // Aim assist toggle
     private static int _aimAssistFOVSize = 3;  // FOV size for aim assist
-    private static int _aimAssistSmoothing = 50;  // Smoothing factor
+    private static int _aimAssistSmoothing = 15;  // Smoothing factor
     private static string _aimAssistToggleKey = "Left_Shift";  // Toggle key
 
     public static Color SelectedColor

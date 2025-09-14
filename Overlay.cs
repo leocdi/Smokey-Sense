@@ -22,7 +22,6 @@ public class Overlay : Form
     private delegate IntPtr LowLevelKeyboardProc(int nCode, IntPtr wParam, IntPtr lParam);  // Keyboard hook delegate
     private readonly Memory memory;  // Memory reader
     private readonly EntityManager entityManager;  // Entity manager
-    private readonly System.Windows.Forms.Timer renderTimer;  // Timer for rendering
     private Pen espPen;  // Pen for drawing ESP
     private IntPtr keyboardHookId = IntPtr.Zero;  // Hook ID
     private bool toggleKeyPressed;  // Toggle state
@@ -34,6 +33,11 @@ public class Overlay : Form
     private static Entity lastTarget = null;  // Last aim target
     private static DateTime targetLockStart = DateTime.Now;  // Target lock time
     private IContainer components;  // Designer stuff
+    private Stopwatch swOverlay = new Stopwatch();
+    private int renderCount = 0;
+    private Thread renderThread;
+    private bool renderThreadRunning = false;
+    private int targetFps = 260; // Modifiable selon besoin
 
     // Constants for window styles and hooks
     private const int GWL_EXSTYLE = -20;
@@ -44,6 +48,7 @@ public class Overlay : Form
     private const int WM_KEYUP = 257;
     private const int VK_RSHIFT = 161;
     private const int VK_LSHIFT = 160;
+    private const int VK_XBUTTON2 = 2;
     private const uint MOUSEEVENTF_MOVE = 1u;
 
     // DLL imports
@@ -79,13 +84,9 @@ public class Overlay : Form
         DoubleBuffered = true;
         SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
 
-        renderTimer = new System.Windows.Forms.Timer { Interval = 16 };
-        renderTimer.Tick += (s, e) => Invalidate();
-
         if (Functions.BoxESPEnabled || Functions.BoneESPEnabled || Functions.AimAssistEnabled)
-            renderTimer.Start();
+            StartRenderThread();
 
-        // Subscribe to setting changes
         Functions.BoxESPEnabledChanged += OnFeatureEnabledChanges;
         Functions.BoneESPEnabledChanged += OnFeatureEnabledChanges;
         Functions.AimAssistEnabledChanged += OnFeatureEnabledChanges;
@@ -98,6 +99,8 @@ public class Overlay : Form
         keyboardHookId = SetWindowsHookEx(WH_KEYBOARD_LL, keyboardProcDelegate, GetModuleHandle(mainModule.ModuleName), 0u);
         if (keyboardHookId == IntPtr.Zero)
             Console.WriteLine($"[i]: Keyboard hook failed, error: {Marshal.GetLastWin32Error()}");
+
+        swOverlay.Start();
     }
 
     private IntPtr KeyboardProc(int nCode, IntPtr wParam, IntPtr lParam)  // Hook callback
@@ -113,16 +116,49 @@ public class Overlay : Form
         return CallNextHookEx(keyboardHookId, nCode, wParam, lParam);
     }
 
+    private void StartRenderThread()
+    {
+        if (renderThreadRunning) return;
+        renderThreadRunning = true;
+        renderThread = new Thread(() =>
+        {
+            Stopwatch sw = new Stopwatch();
+            while (renderThreadRunning)
+            {
+                sw.Restart();
+                if (IsHandleCreated)
+                {
+                    BeginInvoke((Action)(() => Invalidate()));
+                }
+                int frameTime = 1000 / targetFps;
+                int sleep = frameTime - (int)sw.ElapsedMilliseconds;
+                if (sleep > 0)
+                    Thread.Sleep(sleep);
+                else
+                    Thread.Sleep(1); // Pour éviter 100% CPU si trop lent
+            }
+        });
+        renderThread.IsBackground = true;
+        renderThread.Start();
+    }
+
+    private void StopRenderThread()
+    {
+        renderThreadRunning = false;
+        if (renderThread != null && renderThread.IsAlive)
+            renderThread.Join();
+    }
+
     private void OnFeatureEnabledChanges(object sender, EventArgs e)  // Handle feature toggles
     {
         if (Functions.BoxESPEnabled || Functions.BoneESPEnabled || Functions.AimAssistEnabled)
         {
-            renderTimer.Start();
+            StartRenderThread();
             Invalidate();
         }
         else
         {
-            renderTimer.Stop();
+            StopRenderThread();
             Invalidate();
         }
     }
@@ -140,6 +176,7 @@ public class Overlay : Form
 
     private int GetToggleKeyCode()  // Get key code based on setting
     {
+        return VK_XBUTTON2;
         string key = Functions.AimAssistToggleKey;
         if (key == "Right_Shift") return VK_RSHIFT;
         if (key == "Left_Shift") return VK_LSHIFT;
@@ -157,6 +194,8 @@ public class Overlay : Form
 
     protected override void OnPaint(PaintEventArgs e)  // Drawing logic
     {
+        renderCount++;
+        
         base.OnPaint(e);
         Graphics g = e.Graphics;
         g.SmoothingMode = SmoothingMode.AntiAlias;
@@ -187,7 +226,19 @@ public class Overlay : Form
 
         foreach (Entity ent in ents)
         {
-            if (ent.PawnAddress == IntPtr.Zero || ent.health <= 0 || ent.team == local.team) continue;
+            bool doNotConsiderTeam = false;
+
+
+            if (ent.PawnAddress == IntPtr.Zero || ent.health <= 0 || (!doNotConsiderTeam && ent.team == local.team))
+            {
+                continue;
+            }
+
+            if (doNotConsiderTeam && ent.team == local.team)
+            {
+                espPen.Color = Color.Green;
+            }
+
 
             if (Functions.BoxESPEnabled)
             {
@@ -269,15 +320,21 @@ public class Overlay : Form
             mouse_event(MOUSEEVENTF_MOVE, (uint)move.X, (uint)move.Y, 0u, 0);
             Thread.Sleep(rand.Next(1, 4));  // Small delay for human feel
         }
+
+        if(swOverlay.ElapsedMilliseconds > 1000)
+        {
+            Console.WriteLine($"Overlay avg FPS : {renderCount } ");
+            swOverlay.Restart();
+            renderCount = 0;
+        }
     }
 
     protected override void Dispose(bool disposing)  // Cleanup
     {
         if (disposing)
         {
+            StopRenderThread();
             if (keyboardHookId != IntPtr.Zero) UnhookWindowsHookEx(keyboardHookId);
-            renderTimer.Stop();
-            renderTimer.Dispose();
             espPen?.Dispose();
             Functions.BoxESPEnabledChanged -= OnFeatureEnabledChanges;
             Functions.BoneESPEnabledChanged -= OnFeatureEnabledChanges;
