@@ -245,9 +245,24 @@ public class Overlay : Form
 
         if (Functions.AimAssistEnabled && aimToggle && closestTarget != null) // Way too humanized lmfao
         {
-            Vector2 targetHead = closestTarget.head2D;
-            targetHead.Y -= 4f + (float)rand.NextDouble() * 2f;  // Humanize aim point
-            Vector2 delta = targetHead - screenCenter;
+            Vector2 targetPoint;
+
+            // Utilisation du bone configuré si possible, sinon fallback sur head2D
+            if (closestTarget.bones2D != null
+                && Functions.AimBoneId >= 0
+                && Functions.AimBoneId < closestTarget.bones2D.Count)
+            {
+                targetPoint = closestTarget.bones2D[Functions.AimBoneId];
+            }
+            else
+            {
+                targetPoint = closestTarget.head2D;
+            }
+
+            // Humanize aim point
+            targetPoint.Y -= 4f + (float)rand.NextDouble() * 2f;
+
+            Vector2 delta = targetPoint - screenCenter;
             float deltaLen = delta.Length();
             float angle = (float)Math.Atan2(delta.Y, delta.X);
 
