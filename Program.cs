@@ -37,7 +37,7 @@ internal static class Program
         {
             Functions.LoadConfig();
             Functions.StartConfigWatcher();
-
+            Application.ApplicationExit += (s, e) => Functions.StopConfigWatcher();
 
             Console.WriteLine("[i]: Initializing memory for CS2...");
             Memory memory = new Memory();
