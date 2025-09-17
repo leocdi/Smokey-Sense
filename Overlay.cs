@@ -141,9 +141,23 @@ public class Overlay : Form
     private int GetToggleKeyCode()  // Get key code based on setting
     {
         string key = Functions.AimAssistToggleKey;
-        if (key == "Right_Shift") return VK_RSHIFT;
-        if (key == "Left_Shift") return VK_LSHIFT;
-        return VK_LSHIFT;  // Default
+
+        // Gestion spéciale pour certains alias courants
+        if (string.Equals(key, "Right_Shift", StringComparison.OrdinalIgnoreCase)) return VK_RSHIFT;
+        if (string.Equals(key, "Left_Shift", StringComparison.OrdinalIgnoreCase)) return VK_LSHIFT;
+        if (string.Equals(key, "Caps_Lock", StringComparison.OrdinalIgnoreCase)) return (int)Keys.CapsLock;
+
+        // Essaye de parser le nom de la touche via l'énum Keys
+        try
+        {
+            Keys parsedKey = (Keys)Enum.Parse(typeof(Keys), key, true);
+            return (int)parsedKey;
+        }
+        catch
+        {
+            // Si la conversion échoue, fallback sur Left Shift
+            return VK_LSHIFT;
+        }
     }
 
     private bool IsToggleKeyPressedFallback()  // Fallback key check
