@@ -21,6 +21,7 @@ public static class Functions
     private static int _aimAssistSmoothing = 50;  // Smoothing factor
     private static string _aimAssistToggleKey = "Left_Shift";  // Toggle key
     private static int _smoothingMode = 4; // Default smoothing mode (anti alias)
+    private static int _aimBoneId = 9; // Par défaut: 9 (ex: Head pour CS2)
 
     public static Color SelectedColor
     {
@@ -154,6 +155,19 @@ public static class Functions
         }
     }
 
+    public static int AimBoneId
+    {
+        get => _aimBoneId;
+        set
+        {
+            if (_aimBoneId != value)
+            {
+                _aimBoneId = value;
+                AimBoneIdChanged?.Invoke(null, EventArgs.Empty);
+            }
+        }
+    }
+
     public static void LoadConfig()
     {
         var config = ConfigFile.Load(ConfigFilePath);
@@ -165,6 +179,7 @@ public static class Functions
         AimAssistFOVSize = config.AimAssistFOVSize;
         AimAssistSmoothing = config.AimAssistSmoothing;
         AimAssistToggleKey = config.AimAssistToggleKey;
+        AimBoneId = config.AimBoneId;
         SmoothingMode = config.SmoothingMode;
         SelectedColor = Color.FromArgb(
             config.SelectedColorRGBA[3], // Alpha channel
@@ -186,7 +201,8 @@ public static class Functions
             AimAssistFOVSize = AimAssistFOVSize,
             AimAssistSmoothing = AimAssistSmoothing,
             AimAssistToggleKey = AimAssistToggleKey,
-            SmoothingMode = SmoothingMode
+            SmoothingMode = SmoothingMode,
+            AimBoneId = AimBoneId
         };
         ConfigFile.Save(ConfigFilePath, config);
 
@@ -221,6 +237,16 @@ public static class Functions
         _configWatcher.EnableRaisingEvents = true;
     }
 
+    public static void StopConfigWatcher()
+    {
+        if (_configWatcher != null)
+        {
+            _configWatcher.EnableRaisingEvents = false;
+            _configWatcher.Dispose();
+            _configWatcher = null;
+        }
+    }
+
     // Events for setting changes
     public static event EventHandler SelectedColorChanged;
     public static event EventHandler SelectedColorRGBAChanged;
@@ -232,4 +258,5 @@ public static class Functions
     public static event EventHandler AimAssistSmoothingChanged;
     public static event EventHandler AimAssistToggleKeyChanged;
     public static event EventHandler SmoothingModeChanged;
+    public static event EventHandler AimBoneIdChanged;
 }

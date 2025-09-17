@@ -14,6 +14,7 @@ public class FunctionsConfig
     public int AimAssistSmoothing = 50;
     public string AimAssistToggleKey = "Left_Shift";
     public int SmoothingMode = 4; // 4 antialias (see SmoothingMode enum System.Drawing.Drawing2D) 
+    public int AimBoneId = 9; // Par défaut: 9 (Head)
 }
 
 public static class ConfigFile
@@ -67,6 +68,9 @@ public static class ConfigFile
                 case "AimAssistToggleKey":
                     config.AimAssistToggleKey = value;
                     break;
+                case "AimBoneId":
+                    int.TryParse(value, out config.AimBoneId);
+                    break;
             }
         }
         return config;
@@ -85,7 +89,8 @@ public static class ConfigFile
             "AimAssistFOVSize=" + config.AimAssistFOVSize,
             "AimAssistSmoothing=" + config.AimAssistSmoothing,
             "AimAssistToggleKey=" + config.AimAssistToggleKey,
-            "SmoothingMode=" + config.SmoothingMode
+            "SmoothingMode=" + config.SmoothingMode,
+            "AimBoneId=" + config.AimBoneId
         };
         File.WriteAllLines(path, lines.ToArray());
     }
